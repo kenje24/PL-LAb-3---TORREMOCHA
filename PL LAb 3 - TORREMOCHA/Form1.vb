@@ -82,6 +82,7 @@
     End Sub
 
     Sub ComputeFOLLOW()
+        FOLLOW.Clear()
         For Each nt In productions.Keys
             FOLLOW(nt) = New HashSet(Of String)
         Next
@@ -94,21 +95,37 @@
                 For Each rule In productions(lhs)
                     For i = 0 To rule.Count - 1
                         Dim B = rule(i)
-                        If Not productions.ContainsKey(B) Then Continue For
+                        If Not productions.ContainsKey(B) Then Continue For ' Skip if B is terminal
+
                         Dim followSet As New HashSet(Of String)
                         Dim nullable = True
 
+                        ' Look at what follows B
                         For j = i + 1 To rule.Count - 1
                             Dim sym = rule(j)
-                            If Not FIRST.ContainsKey(sym) Then FIRST(sym) = New HashSet(Of String)
-                            followSet.UnionWith(FIRST(sym).Where(Function(s) s <> "λ"))
-                            If Not FIRST(sym).Contains("λ") Then
+
+                            If Not productions.ContainsKey(sym) Then
+                                ' Terminal directly follows B — add it to FOLLOW(B)
+                                If FOLLOW(B).Add(sym) Then changed = True
                                 nullable = False
                                 Exit For
+                            Else
+                                ' Add FIRST(sym) minus λ to FOLLOW(B)
+                                followSet.UnionWith(FIRST(sym).Where(Function(s) s <> "λ"))
+                                If FIRST(sym).Contains("λ") Then
+                                    Continue For
+                                Else
+                                    nullable = False
+                                    Exit For
+                                End If
                             End If
                         Next
 
-                        If nullable Then followSet.UnionWith(FOLLOW(lhs))
+                        ' If nothing follows B, or all following symbols are nullable, add FOLLOW(lhs)
+                        If i = rule.Count - 1 Or nullable Then
+                            followSet.UnionWith(FOLLOW(lhs))
+                        End If
+
                         Dim before = FOLLOW(B).Count
                         FOLLOW(B).UnionWith(followSet)
                         If FOLLOW(B).Count > before Then changed = True
@@ -117,6 +134,9 @@
             Next
         Loop While changed
     End Sub
+
+
+
 
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click

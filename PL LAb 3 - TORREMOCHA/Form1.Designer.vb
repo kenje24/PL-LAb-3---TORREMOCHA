@@ -50,14 +50,14 @@ Partial Class Form1
         dgvFirstFollow.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvFirstFollow.Location = New Point(286, 25)
         dgvFirstFollow.Name = "dgvFirstFollow"
-        dgvFirstFollow.Size = New Size(302, 239)
+        dgvFirstFollow.Size = New Size(461, 279)
         dgvFirstFollow.TabIndex = 2
         ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(611, 288)
+        ClientSize = New Size(824, 386)
         Controls.Add(dgvFirstFollow)
         Controls.Add(rtbOutput)
         Controls.Add(Button1)
